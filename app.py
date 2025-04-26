@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import pickle
 from sklearn import datasets
 from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
 # Streamlit page config
@@ -17,12 +17,13 @@ iris = datasets.load_iris()
 X = iris.data
 y = iris.target
 
-# Load trained model
-with open("kmeans_iris_model.pkl", "rb") as file:
-    kmeans = pickle.load(file)
+# Sidebar slider to select number of clusters
+n_clusters = st.sidebar.slider("Select number of clusters (k)", 2, 10, 3)
 
-# Predict cluster labels
-labels = kmeans.predict(X)
+# Train KMeans model with selected number of clusters
+kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+kmeans.fit(X)
+labels = kmeans.labels_
 
 # PCA for 2D plotting
 pca = PCA(n_components=2)
@@ -35,15 +36,15 @@ df = pd.DataFrame({
     'Cluster': labels
 })
 
-# Plot
+# Plot clusters
 fig, ax = plt.subplots(figsize=(8, 6))
 for cluster in np.unique(labels):
     subset = df[df['Cluster'] == cluster]
     ax.scatter(subset['PCA1'], subset['PCA2'], label=f"Cluster {cluster}")
 ax.set_xlabel("PCA1")
 ax.set_ylabel("PCA2")
-ax.set_title("Clusters (2D PCA Projection)")
+ax.set_title(f"K-Means Clustering with k = {n_clusters}")
 ax.legend()
 
-# Show plot in Streamlit
+# Display plot
 st.pyplot(fig)
