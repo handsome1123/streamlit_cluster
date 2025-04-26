@@ -43,7 +43,7 @@ for cluster in np.unique(labels):
     ax.scatter(subset['PCA1'], subset['PCA2'], label=f"Cluster {cluster}")
 ax.set_xlabel("PCA1")
 ax.set_ylabel("PCA2")
-ax.set_title(f"K-Means Clustering with k = {n_clusters}")
+ax.set_title(f"Cluster (2D PCA Projection) with k = {n_clusters}")
 ax.legend()
 
 # Display plot
